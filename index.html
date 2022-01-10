@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <link rel="icon" href="data:,">
+    <title>{{ TITLE }}</title>
+</head>
+
+<style>
+body {
+    margin: 0px;
+    display: flex;
+    overflow: hidden;
+}
+canvas {
+    touch-action: none;
+}
+</style>
+
+<body>
+    <script type="text/javascript" src="jszip.min.js"></script>
+    <script type="module">
+
+        import init from "./bevy_rust_roguelike_tut.js";
+
+        async function run() {
+            await init("./bevy_rust_roguelike_tut_bg.wasm");
+        }
+
+        const reloadInterval = 1000;
+        const maxFailCount = 5;
+
+        async function startReloadInterval() {
+            const fetchVersion = () => fetch("/api/version").then(response => response.text());
+            const version = await fetchVersion();
+            let failedCount = 0;
+            let intervalToken;
+
+            function reloadIfChanged() {
+                fetchVersion()
+                    .then(newVersion => {
+                        if (version != newVersion) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(e => {
+                        failedCount += 1;
+                        if (failedCount >= maxFailCount) {
+                            clearInterval(intervalToken);
+                            console.warn("Server disconnected");
+                        }
+                    });
+            }
+
+            intervalToken = setInterval(reloadIfChanged, reloadInterval)
+        }
+
+        run();
+        startReloadInterval();
+    </script>
+</body>
+
+</html>
