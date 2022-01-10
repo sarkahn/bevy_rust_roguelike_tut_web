@@ -1,5 +1,5 @@
 body {
-    margin: 60px auto;
+    margin: 20px auto;
     width: 100%;
     background-color: black;
 }
@@ -12,7 +12,8 @@ iframe {
 }
 
 .iframe-container {
-  display: grid;
+
+  display: flex;
   color:black;
   text-align: center;
 }
